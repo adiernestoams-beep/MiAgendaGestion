@@ -1,0 +1,5 @@
+package pe.agenda.gestion;
+import android.app.*;import android.content.*;import java.util.*;
+public class ReminderScheduler {
+ public static void schedule(Context c,EventItem e){if(e.reminderMinutes<0||e.startDate==null||e.startDate.isEmpty())return;try{String hm=(e.time==null||e.time.isEmpty())?"09:00":e.time;String[] d=e.startDate.split("-"),t=hm.split(":");Calendar cal=Calendar.getInstance();cal.set(Integer.parseInt(d[0]),Integer.parseInt(d[1])-1,Integer.parseInt(d[2]),Integer.parseInt(t[0]),Integer.parseInt(t[1]),0);cal.set(Calendar.MILLISECOND,0);long at=cal.getTimeInMillis()-e.reminderMinutes*60000L;if(at<System.currentTimeMillis())return;Intent i=new Intent(c,ReminderReceiver.class);i.putExtra("id",e.id);i.putExtra("title",e.title);i.putExtra("when",e.startDate+(e.time.isEmpty()?"":" · "+e.time));PendingIntent pi=PendingIntent.getBroadcast(c,(int)(e.id%Integer.MAX_VALUE),i,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);AlarmManager am=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,at,pi);}catch(Exception ignored){}}
+}
