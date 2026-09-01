@@ -18,12 +18,19 @@ jobs:
       - name: Descargar proyecto
         uses: actions/checkout@v4
 
-      - name: Preparar código y datos de la aplicación
+      - name: Reconstruir código y datos de forma segura
         shell: bash
         run: |
-          unzip -o build-support/main.zip
-          unzip -o build-support/db.zip
-          unzip -o build-support/seed.zip
+          set -euo pipefail
+          mkdir -p app/src/main/java/pe/agenda/gestion app/src/main/assets
+          base64 -d build-support/MainActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/MainActivity.java
+          base64 -d build-support/DB.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/DB.java
+          base64 -d build-support/seed_events.json.gz.b64 | gzip -dc > app/src/main/assets/seed_events.json
+          test -s app/src/main/java/pe/agenda/gestion/MainActivity.java
+          test -s app/src/main/java/pe/agenda/gestion/DB.java
+          test -s app/src/main/assets/seed_events.json
+          python3 -m json.tool app/src/main/assets/seed_events.json >/dev/null
+          echo "Archivos reconstruidos correctamente"
 
       - name: Configurar Java 17
         uses: actions/setup-java@v4
