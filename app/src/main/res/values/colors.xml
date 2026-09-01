@@ -1,0 +1,13 @@
+<resources>
+    <color name="blue">#0B57D0</color>
+    <color name="blue_light">#E9F0FF</color>
+    <color name="bg">#F5F7FB</color>
+    <color name="red">#D93025</color>
+    <color name="red_light">#FCE8E6</color>
+    <color name="yellow">#B06000</color>
+    <color name="yellow_light">#FFF3CD</color>
+    <color name="green">#188038</color>
+    <color name="green_light">#E6F4EA</color>
+    <color name="text">#1F2937</color>
+    <color name="muted">#6B7280</color>
+</resources>
