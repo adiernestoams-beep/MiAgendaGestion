@@ -23,13 +23,20 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p app/src/main/java/pe/agenda/gestion app/src/main/assets app/src/main/res/drawable-nodpi
+          echo "Reconstruyendo MainActivity"
           base64 -d build-support/MainActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/MainActivity.java
+          echo "Reconstruyendo DB"
           base64 -d build-support/DB.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/DB.java
+          echo "Reconstruyendo datos"
           base64 -d build-support/seed_events.json.gz.b64 | gzip -dc > app/src/main/assets/seed_events.json
-          base64 -d build-support/AgendaDb3.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
-          base64 -d build-support/FinalActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
-          base64 -d build-support/SplashActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
-          cat build-support/logo8_00.b64 build-support/logo8_01.b64 build-support/logo8_02.b64 build-support/logo8_03.b64 build-support/logo8_04.b64 build-support/logo8_05.b64 build-support/logo8_06.b64 build-support/logo8_07.b64 | base64 -d > app/src/main/res/drawable-nodpi/logo_365.png
+          echo "Reconstruyendo AgendaDb3"
+          cat build-support/adb_00.b64 build-support/adb_01.b64 build-support/adb_02.b64 build-support/adb_03.b64 | tr -d '\r\n ' | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
+          echo "Reconstruyendo FinalActivity"
+          tr -d '\r\n ' < build-support/FinalActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
+          echo "Reconstruyendo SplashActivity"
+          tr -d '\r\n ' < build-support/SplashActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
+          echo "Reconstruyendo logo oficial"
+          cat build-support/logo8_00.b64 build-support/logo8_01.b64 build-support/logo8_02.b64 build-support/logo8_03.b64 build-support/logo8_04.b64 build-support/logo8_05.b64 build-support/logo8_06.b64 build-support/logo8_07.b64 | tr -d '\r\n ' | base64 -d > app/src/main/res/drawable-nodpi/logo_365.png
           test -s app/src/main/java/pe/agenda/gestion/MainActivity.java
           test -s app/src/main/java/pe/agenda/gestion/DB.java
           test -s app/src/main/java/pe/agenda/gestion/AgendaDb3.java
