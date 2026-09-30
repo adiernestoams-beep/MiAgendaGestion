@@ -8,9 +8,12 @@
     <application
         android:allowBackup="true"
         android:resizeableActivity="true"
-        android:label="Mi Agenda Gestión"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:screenOrientation="unspecified" android:exported="true">
+        <activity android:name=".MainActivity" android:screenOrientation="unspecified" android:resizeableActivity="true" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".SplashActivity" android:screenOrientation="unspecified" android:resizeableActivity="true" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
