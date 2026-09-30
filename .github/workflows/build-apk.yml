@@ -43,20 +43,26 @@ jobs:
         with:
           gradle-version: '8.10.2'
 
-      - name: Usar Android SDK preinstalado
+      - name: Preparar Android SDK preinstalado
         shell: bash
         run: |
           set -euo pipefail
           echo "ANDROID_HOME=${ANDROID_HOME:-}"
-          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-}"
-          command -v sdkmanager
-          sdkmanager --version
+          SDKMANAGER="$(find "${ANDROID_HOME}" -type f -name sdkmanager -print -quit)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "sdkmanager no encontrado en ${ANDROID_HOME}"
+            find "${ANDROID_HOME}" -maxdepth 4 -type f | head -200 || true
+            exit 1
+          fi
+          echo "SDKMANAGER=$SDKMANAGER" >> "$GITHUB_ENV"
+          echo "$(dirname "$SDKMANAGER")" >> "$GITHUB_PATH"
+          "$SDKMANAGER" --version
 
       - name: Instalar Android SDK 35 y Build Tools
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Compilar APK 365 Agenda
         run: gradle --no-daemon :app:assembleDebug --stacktrace
