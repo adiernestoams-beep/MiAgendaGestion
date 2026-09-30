@@ -30,13 +30,13 @@ jobs:
           echo "Reconstruyendo datos"
           base64 -d build-support/seed_events.json.gz.b64 | gzip -dc > app/src/main/assets/seed_events.json
           echo "Reconstruyendo AgendaDb3"
-          cat build-support/adb_00.b64 build-support/adb_01.b64 build-support/adb_02.b64 build-support/adb_03.b64 | tr -d '\r\n ' | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
+          { cat build-support/adb_00.b64 build-support/adb_01.b64 build-support/adb_02.b64 build-support/adb_03a.b64 build-support/adb_03b_nopad.b64; printf '='; } | tr -d '\r\n ' | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
           echo "Reconstruyendo FinalActivity"
           tr -d '\r\n ' < build-support/FinalActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
           echo "Reconstruyendo SplashActivity"
           tr -d '\r\n ' < build-support/SplashActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
           echo "Reconstruyendo logo oficial"
-          cat build-support/logo8_00.b64 build-support/logo8_01.b64 build-support/logo8_02.b64 build-support/logo8_03.b64 build-support/logo8_04.b64 build-support/logo8_05.b64 build-support/logo8_06.b64 build-support/logo8_07.b64 | tr -d '\r\n ' | base64 -d > app/src/main/res/drawable-nodpi/logo_365.png
+          cat build-support/logo8_00.b64 build-support/logo8_01.b64 build-support/logo8_02.b64 build-support/logo8_03.b64 build-support/logo8_04.b64 build-support/logo5_0.b64 build-support/logo5_1.b64 build-support/logo5_2.b64 build-support/logo5_3.b64 build-support/logo8_06.b64 build-support/logo8_07.b64 | tr -d '\r\n ' | base64 -d > app/src/main/res/drawable-nodpi/logo_365.png
           test -s app/src/main/java/pe/agenda/gestion/MainActivity.java
           test -s app/src/main/java/pe/agenda/gestion/DB.java
           test -s app/src/main/java/pe/agenda/gestion/AgendaDb3.java
