@@ -23,19 +23,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p app/src/main/java/pe/agenda/gestion app/src/main/assets app/src/main/res/drawable-nodpi
-          echo "Reconstruyendo MainActivity"
           base64 -d build-support/MainActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/MainActivity.java
-          echo "Reconstruyendo DB"
           base64 -d build-support/DB.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/DB.java
-          echo "Reconstruyendo datos"
           base64 -d build-support/seed_events.json.gz.b64 | gzip -dc > app/src/main/assets/seed_events.json
-          echo "Reconstruyendo AgendaDb3"
           { cat build-support/adb_00.b64 build-support/adb_01.b64 build-support/adb_02.b64 build-support/adb_03a.b64 build-support/adb_03b_nopad.b64; printf '='; } | tr -d '\r\n ' | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
-          echo "Reconstruyendo FinalActivity"
           tr -d '\r\n ' < build-support/FinalActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
-          echo "Reconstruyendo SplashActivity"
           tr -d '\r\n ' < build-support/SplashActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
-          echo "Reconstruyendo logo oficial"
           cat build-support/logo8_00.b64 build-support/logo8_01.b64 build-support/logo8_02.b64 build-support/logo8_03.b64 build-support/logo8_04.b64 build-support/logo5_0.b64 build-support/logo5_1.b64 build-support/logo5_2.b64 build-support/logo5_3.b64 build-support/logo8_06.b64 build-support/logo8_07.b64 | tr -d '\r\n ' | base64 -d > app/src/main/res/drawable-nodpi/logo_365.png
           test -s app/src/main/java/pe/agenda/gestion/MainActivity.java
           test -s app/src/main/java/pe/agenda/gestion/DB.java
@@ -46,7 +39,26 @@ jobs:
           test -s app/src/main/res/drawable-nodpi/logo_365.png
           python3 -m json.tool app/src/main/assets/seed_events.json >/dev/null
           file app/src/main/res/drawable-nodpi/logo_365.png | grep -qi 'PNG image data'
-          echo "365 Agenda v3 reconstruida correctamente"
+          echo "365 Agenda reconstruida correctamente"
+
+      - name: Empaquetar fuentes reconstruidas
+        shell: bash
+        run: |
+          mkdir -p reconstructed
+          cp app/src/main/java/pe/agenda/gestion/MainActivity.java reconstructed/
+          cp app/src/main/java/pe/agenda/gestion/DB.java reconstructed/
+          cp app/src/main/java/pe/agenda/gestion/AgendaDb3.java reconstructed/
+          cp app/src/main/java/pe/agenda/gestion/FinalActivity.java reconstructed/
+          cp app/src/main/java/pe/agenda/gestion/SplashActivity.java reconstructed/
+          cp app/src/main/assets/seed_events.json reconstructed/
+          cp app/src/main/res/drawable-nodpi/logo_365.png reconstructed/
+
+      - name: Subir fuentes reconstruidas
+        uses: actions/upload-artifact@v4
+        with:
+          name: 365Agenda-reconstructed-sources
+          path: reconstructed/
+          retention-days: 2
 
       - name: Configurar Java 17
         uses: actions/setup-java@v4
@@ -63,11 +75,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "ANDROID_HOME=${ANDROID_HOME:-}"
           SDKMANAGER="$(find "${ANDROID_HOME}" -type f -name sdkmanager -print -quit)"
           if [ -z "$SDKMANAGER" ]; then
-            echo "sdkmanager no encontrado en ${ANDROID_HOME}"
-            find "${ANDROID_HOME}" -maxdepth 4 -type f | head -200 || true
             exit 1
           fi
           echo "SDKMANAGER=$SDKMANAGER" >> "$GITHUB_ENV"
