@@ -30,15 +30,28 @@ jobs:
           tr -d '\r\n ' < build-support/FinalActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
           sed -i '/db.ensureOfficialOctober2026();/a\        DriveLinks.apply(db);' app/src/main/java/pe/agenda/gestion/FinalActivity.java
           tr -d '\r\n ' < build-support/SplashActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
-          cat build-support/logo8_00.b64 build-support/logo8_01.b64 build-support/logo8_02.b64 build-support/logo8_03.b64 build-support/logo8_04.b64 build-support/logo5_0.b64 build-support/logo5_1.b64 build-support/logo5_2.b64 build-support/logo5_3.b64 build-support/logo8_06.b64 build-support/logo8_07.b64 | tr -d '\r\n ' | base64 -d > app/src/main/res/drawable-nodpi/logo_365.png
+
+          # Logo oficial indicado por el usuario. Si no se obtiene exactamente este archivo, la compilación falla.
+          rm -f app/src/main/res/drawable-nodpi/logo_365.png
+          curl -L --fail --retry 3 --retry-delay 2 --connect-timeout 20 \
+            "https://drive.usercontent.google.com/download?id=1bBxP2k3k1kiFMqcJsJutdv2w-AcLnScU&export=download&confirm=t" \
+            -o app/src/main/res/drawable-nodpi/logo_365.png
+          echo "626c6de4acba04e3482e59d592ccf0c55e3bc593a6d691e8780c9c9c9227fb14  app/src/main/res/drawable-nodpi/logo_365.png" | sha256sum -c -
+
           test -s app/src/main/java/pe/agenda/gestion/DriveLinks.java
           test -s app/src/main/java/pe/agenda/gestion/FinalActivity.java
           test -s app/src/main/assets/seed_events.json
           test -s app/src/main/res/drawable-nodpi/logo_365.png
+          test -s app/src/main/res/drawable/ic_launcher_foreground.xml
+          test -s app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test -s app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
           grep -q 'DriveLinks.apply(db)' app/src/main/java/pe/agenda/gestion/FinalActivity.java
+          grep -q '@drawable/logo_365' app/src/main/res/drawable/ic_launcher_foreground.xml
+          grep -q '@mipmap/ic_launcher' app/src/main/AndroidManifest.xml
+          grep -q '@mipmap/ic_launcher_round' app/src/main/AndroidManifest.xml
           python3 -m json.tool app/src/main/assets/seed_events.json >/dev/null
           file app/src/main/res/drawable-nodpi/logo_365.png | grep -qi 'PNG image data'
-          echo "365 Agenda v4 reconstruida correctamente"
+          echo "365 Agenda v5: logo oficial verificado e identidad visual aplicada"
 
       - name: Configurar Java 17
         uses: actions/setup-java@v4
@@ -76,13 +89,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk "dist/365Agenda-TecnoMegaPadPro12-v4.apk"
-          sha256sum "dist/365Agenda-TecnoMegaPadPro12-v4.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk "dist/365Agenda-TecnoMegaPadPro12-v5.apk"
+          sha256sum "dist/365Agenda-TecnoMegaPadPro12-v5.apk"
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
-          name: 365Agenda-TecnoMegaPadPro12-v4
-          path: dist/365Agenda-TecnoMegaPadPro12-v4.apk
+          name: 365Agenda-TecnoMegaPadPro12-v5
+          path: dist/365Agenda-TecnoMegaPadPro12-v5.apk
           if-no-files-found: error
           retention-days: 30
