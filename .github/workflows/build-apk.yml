@@ -26,7 +26,7 @@ jobs:
           base64 -d build-support/MainActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/MainActivity.java
           base64 -d build-support/DB.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/DB.java
           base64 -d build-support/seed_events.json.gz.b64 | gzip -dc > app/src/main/assets/seed_events.json
-          { cat build-support/adb_00.b64 build-support/adb_01.b64 build-support/adb_02.b64 build-support/adb_03a.b64 build-support/adb_03b_nopad.b64; printf '='; } | tr -d '\r\n ' | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
+          tr -d '\r\n ' < build-support/AgendaDb3.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
           tr -d '\r\n ' < build-support/FinalActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
           sed -i '/db.ensureOfficialOctober2026();/a\        DriveLinks.apply(db);' app/src/main/java/pe/agenda/gestion/FinalActivity.java
           tr -d '\r\n ' < build-support/SplashActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
@@ -39,6 +39,7 @@ jobs:
           echo "626c6de4acba04e3482e59d592ccf0c55e3bc593a6d691e8780c9c9c9227fb14  app/src/main/res/drawable-nodpi/logo_365.png" | sha256sum -c -
 
           test -s app/src/main/java/pe/agenda/gestion/DriveLinks.java
+          test -s app/src/main/java/pe/agenda/gestion/AgendaDb3.java
           test -s app/src/main/java/pe/agenda/gestion/FinalActivity.java
           test -s app/src/main/assets/seed_events.json
           test -s app/src/main/res/drawable-nodpi/logo_365.png
@@ -46,12 +47,32 @@ jobs:
           test -s app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
           test -s app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
           grep -q 'DriveLinks.apply(db)' app/src/main/java/pe/agenda/gestion/FinalActivity.java
+          grep -q 'cleanupCalendarDuplicates' app/src/main/java/pe/agenda/gestion/FinalActivity.java
+          grep -q 'DB_VERSION = 2' app/src/main/java/pe/agenda/gestion/AgendaDb3.java
           grep -q '@drawable/logo_365' app/src/main/res/drawable/ic_launcher_foreground.xml
           grep -q '@mipmap/ic_launcher' app/src/main/AndroidManifest.xml
           grep -q '@mipmap/ic_launcher_round' app/src/main/AndroidManifest.xml
           python3 -m json.tool app/src/main/assets/seed_events.json >/dev/null
+          python3 - <<'PY'
+          import json,re,unicodedata
+          data=json.load(open('app/src/main/assets/seed_events.json',encoding='utf-8'))
+          def n(s):
+              s=unicodedata.normalize('NFKD',s).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]+',' ',s).strip()
+          seen=set()
+          for e in data:
+              key=(n(e.get('title','')),e.get('startDate',''),e.get('endDate',''))
+              if key in seen: raise SystemExit('Duplicate event in seed: '+str(key))
+              seen.add(key)
+          assert not any(e.get('startDate')=='2026-09-02' and 'quimicat' in n(e.get('title','')) for e in data)
+          assert not any(e.get('startDate')=='2026-09-29' and 'comprobando mis conocimientos' in n(e.get('title','')) for e in data)
+          assert sum(1 for e in data if e.get('startDate')=='2026-06-17' and 'taller de orientacion vocacional' in n(e.get('title','')))==1
+          assert any(e.get('startDate')=='2026-10-01' and 'comprobando mis conocimientos' in n(e.get('title','')) for e in data)
+          assert any(e.get('startDate')=='2026-10-14' and 'quimicat' in n(e.get('title','')) for e in data)
+          print('Seed limpio:',len(data),'eventos; sin duplicados exactos')
+          PY
           file app/src/main/res/drawable-nodpi/logo_365.png | grep -qi 'PNG image data'
-          echo "365 Agenda v5: logo oficial verificado e identidad visual aplicada"
+          echo "365 Agenda v6: deduplicación, octubre oficial y logo oficial verificados"
 
       - name: Configurar Java 17
         uses: actions/setup-java@v4
@@ -89,13 +110,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk "dist/365Agenda-TecnoMegaPadPro12-v5.apk"
-          sha256sum "dist/365Agenda-TecnoMegaPadPro12-v5.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk "dist/365Agenda-TecnoMegaPadPro12-v6.apk"
+          sha256sum "dist/365Agenda-TecnoMegaPadPro12-v6.apk"
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
-          name: 365Agenda-TecnoMegaPadPro12-v5
-          path: dist/365Agenda-TecnoMegaPadPro12-v5.apk
+          name: 365Agenda-TecnoMegaPadPro12-v6
+          path: dist/365Agenda-TecnoMegaPadPro12-v6.apk
           if-no-files-found: error
           retention-days: 30
