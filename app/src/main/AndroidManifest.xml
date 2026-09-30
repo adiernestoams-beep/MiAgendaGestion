@@ -9,16 +9,36 @@
         android:allowBackup="true"
         android:resizeableActivity="true"
         android:label="@string/app_name"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/logo_365"
+        android:roundIcon="@drawable/logo_365"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:screenOrientation="unspecified" android:resizeableActivity="true" android:exported="false" android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".SplashActivity" android:screenOrientation="unspecified" android:resizeableActivity="true" android:exported="true">
+
+        <activity
+            android:name=".FinalActivity"
+            android:screenOrientation="unspecified"
+            android:resizeableActivity="true"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="unspecified"
+            android:resizeableActivity="true"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="unspecified"
+            android:resizeableActivity="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver android:name=".ReminderReceiver" android:exported="false" />
     </application>
 </manifest>
