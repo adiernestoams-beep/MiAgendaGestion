@@ -8,6 +8,7 @@ public class EventItem {
     public int managementYear;
     public String title="", details="", startDate="", endDate="", time="", place="", responsible="";
     public String priority="SE_ACERCA", status="PENDIENTE", prepStatus="PENDIENTE", notes="", source="Actividad manual";
+    public String category="ACADEMICO", magUid="";
     public boolean syncEnabled=true;
     public Long calendarEventId=null, calendarId=null;
     public int reminderMinutes=1440;
@@ -20,5 +21,15 @@ public class EventItem {
         public boolean done=false;
         public Subtask() {}
         public Subtask(String t, boolean d){title=t;done=d;}
+    }
+
+    public String computedStatus(){
+        if(subtasks!=null && !subtasks.isEmpty()){
+            int done=0; for(Subtask s:subtasks) if(s.done) done++;
+            if(done==0) return "PENDIENTE";
+            if(done==subtasks.size()) return "COMPLETADO";
+            return "EN_PROCESO";
+        }
+        return status==null||status.isEmpty()?"PENDIENTE":status;
     }
 }
