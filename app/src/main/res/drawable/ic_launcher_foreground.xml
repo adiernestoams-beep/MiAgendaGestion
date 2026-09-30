@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp" android:height="108dp"
-    android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#FFFFFF" android:pathData="M26,24 H82 C85.5,24 88,26.5 88,30 V82 C88,85.5 85.5,88 82,88 H26 C22.5,88 20,85.5 20,82 V30 C20,26.5 22.5,24 26,24 Z"/>
-    <path android:fillColor="#7543F4" android:pathData="M26,24 H82 C85.5,24 88,26.5 88,30 V39 H20 V30 C20,26.5 22.5,24 26,24 Z"/>
-    <path android:fillColor="#00000000" android:strokeColor="#FFFFFF" android:strokeWidth="7" android:strokeLineCap="round" android:pathData="M35,18 L35,30"/>
-    <path android:fillColor="#00000000" android:strokeColor="#FFFFFF" android:strokeWidth="7" android:strokeLineCap="round" android:pathData="M73,18 L73,30"/>
-    <path android:fillColor="#16A9F5" android:pathData="M29,48 H45 V62 H29 Z"/>
-    <path android:fillColor="#FFAA22" android:pathData="M47,48 H63 V62 H47 Z"/>
-    <path android:fillColor="#42D773" android:pathData="M65,48 H81 V62 H65 Z"/>
-    <path android:fillColor="#FF3B99" android:pathData="M29,65 H45 V79 H29 Z"/>
-    <path android:fillColor="#E6E9F7" android:pathData="M47,65 H63 V79 H47 Z"/>
-    <path android:fillColor="#E6E9F7" android:pathData="M65,65 H81 V79 H65 Z"/>
-</vector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:left="12dp"
+        android:top="12dp"
+        android:right="12dp"
+        android:bottom="12dp">
+        <bitmap
+            android:src="@drawable/logo_365"
+            android:gravity="fill"
+            android:filter="true" />
+    </item>
+</layer-list>
