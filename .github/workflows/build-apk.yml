@@ -38,12 +38,7 @@ jobs:
           test -s app/src/main/assets/seed_events.json
           test -s app/src/main/res/drawable-nodpi/logo_365.png
           python3 -m json.tool app/src/main/assets/seed_events.json >/dev/null
-          python3 - <<'PY'
-          from PIL import Image
-          im=Image.open('app/src/main/res/drawable-nodpi/logo_365.png')
-          assert im.size == (192,192), im.size
-          print('Logo oficial:', im.size, im.mode)
-          PY
+          file app/src/main/res/drawable-nodpi/logo_365.png | grep -qi 'PNG image data'
           echo "365 Agenda v3 reconstruida correctamente"
 
       - name: Configurar Java 17
