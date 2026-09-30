@@ -1,13 +1,14 @@
 <resources>
-    <color name="blue">#0B57D0</color>
+    <color name="blue">#0D67E2</color>
     <color name="blue_light">#E9F0FF</color>
-    <color name="bg">#F5F7FB</color>
-    <color name="red">#D93025</color>
-    <color name="red_light">#FCE8E6</color>
-    <color name="yellow">#B06000</color>
-    <color name="yellow_light">#FFF3CD</color>
-    <color name="green">#188038</color>
-    <color name="green_light">#E6F4EA</color>
-    <color name="text">#1F2937</color>
-    <color name="muted">#6B7280</color>
+    <color name="bg">#F7F9FD</color>
+    <color name="red">#E22835</color>
+    <color name="red_light">#FFE8EB</color>
+    <color name="yellow">#EE9A00</color>
+    <color name="yellow_light">#FFF5CD</color>
+    <color name="green">#0F9D58</color>
+    <color name="green_light">#E0F8EA</color>
+    <color name="text">#132243</color>
+    <color name="muted">#65718F</color>
+    <color name="launcher_bg">#6E36E8</color>
 </resources>
