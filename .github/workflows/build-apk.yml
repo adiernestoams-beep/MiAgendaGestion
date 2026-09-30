@@ -18,19 +18,33 @@ jobs:
       - name: Descargar proyecto
         uses: actions/checkout@v4
 
-      - name: Reconstruir código y datos
+      - name: Reconstruir código, datos y logo oficial
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p app/src/main/java/pe/agenda/gestion app/src/main/assets
+          mkdir -p app/src/main/java/pe/agenda/gestion app/src/main/assets app/src/main/res/drawable-nodpi
           base64 -d build-support/MainActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/MainActivity.java
           base64 -d build-support/DB.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/DB.java
           base64 -d build-support/seed_events.json.gz.b64 | gzip -dc > app/src/main/assets/seed_events.json
+          base64 -d build-support/AgendaDb3.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/AgendaDb3.java
+          base64 -d build-support/FinalActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
+          base64 -d build-support/SplashActivity.java.gz.b64 | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
+          cat build-support/logo8_00.b64 build-support/logo8_01.b64 build-support/logo8_02.b64 build-support/logo8_03.b64 build-support/logo8_04.b64 build-support/logo8_05.b64 build-support/logo8_06.b64 build-support/logo8_07.b64 | base64 -d > app/src/main/res/drawable-nodpi/logo_365.png
           test -s app/src/main/java/pe/agenda/gestion/MainActivity.java
           test -s app/src/main/java/pe/agenda/gestion/DB.java
+          test -s app/src/main/java/pe/agenda/gestion/AgendaDb3.java
+          test -s app/src/main/java/pe/agenda/gestion/FinalActivity.java
+          test -s app/src/main/java/pe/agenda/gestion/SplashActivity.java
           test -s app/src/main/assets/seed_events.json
+          test -s app/src/main/res/drawable-nodpi/logo_365.png
           python3 -m json.tool app/src/main/assets/seed_events.json >/dev/null
-          echo "365 Agenda reconstruida correctamente"
+          python3 - <<'PY'
+          from PIL import Image
+          im=Image.open('app/src/main/res/drawable-nodpi/logo_365.png')
+          assert im.size == (192,192), im.size
+          print('Logo oficial:', im.size, im.mode)
+          PY
+          echo "365 Agenda v3 reconstruida correctamente"
 
       - name: Configurar Java 17
         uses: actions/setup-java@v4
@@ -72,11 +86,12 @@ jobs:
         run: |
           mkdir -p dist
           cp app/build/outputs/apk/debug/app-debug.apk "dist/365Agenda-TecnoMegaPadPro12.apk"
+          sha256sum "dist/365Agenda-TecnoMegaPadPro12.apk"
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
-          name: 365Agenda-TecnoMegaPadPro12
+          name: 365Agenda-TecnoMegaPadPro12-v3
           path: dist/365Agenda-TecnoMegaPadPro12.apk
           if-no-files-found: error
           retention-days: 30
