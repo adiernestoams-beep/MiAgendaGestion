@@ -30,6 +30,7 @@ jobs:
           tr -d '\r\n ' < build-support/FinalActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/FinalActivity.java
           sed -i '/db.ensureOfficialOctober2026();/a\        DriveLinks.apply(db);' app/src/main/java/pe/agenda/gestion/FinalActivity.java
           tr -d '\r\n ' < build-support/SplashActivity.java.gz.b64 | base64 -d | gzip -dc > app/src/main/java/pe/agenda/gestion/SplashActivity.java
+          python3 build-support/patch_safe_sync.py
 
           # Logo oficial indicado por el usuario. Si no se obtiene exactamente este archivo, la compilación falla.
           rm -f app/src/main/res/drawable-nodpi/logo_365.png
@@ -48,7 +49,7 @@ jobs:
           test -s app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
           grep -q 'DriveLinks.apply(db)' app/src/main/java/pe/agenda/gestion/FinalActivity.java
           grep -q 'cleanupCalendarDuplicates' app/src/main/java/pe/agenda/gestion/FinalActivity.java
-          grep -q 'DB_VERSION = 2' app/src/main/java/pe/agenda/gestion/AgendaDb3.java
+          grep -q 'DB_VERSION = 3' app/src/main/java/pe/agenda/gestion/AgendaDb3.java
           grep -q '@drawable/logo_365' app/src/main/res/drawable/ic_launcher_foreground.xml
           grep -q '@mipmap/ic_launcher' app/src/main/AndroidManifest.xml
           grep -q '@mipmap/ic_launcher_round' app/src/main/AndroidManifest.xml
@@ -72,7 +73,7 @@ jobs:
           print('Seed limpio:',len(data),'eventos; sin duplicados exactos')
           PY
           file app/src/main/res/drawable-nodpi/logo_365.png | grep -qi 'PNG image data'
-          echo "365 Agenda v6: deduplicación, octubre oficial y logo oficial verificados"
+          echo "365 Agenda v7: deduplicación, octubre oficial y logo oficial verificados"
 
       - name: Configurar Java 17
         uses: actions/setup-java@v4
@@ -110,13 +111,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk "dist/365Agenda-TecnoMegaPadPro12-v6.apk"
-          sha256sum "dist/365Agenda-TecnoMegaPadPro12-v6.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk "dist/365Agenda-TecnoMegaPadPro12-v7.apk"
+          sha256sum "dist/365Agenda-TecnoMegaPadPro12-v7.apk"
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
-          name: 365Agenda-TecnoMegaPadPro12-v6
-          path: dist/365Agenda-TecnoMegaPadPro12-v6.apk
+          name: 365Agenda-TecnoMegaPadPro12-v7
+          path: dist/365Agenda-TecnoMegaPadPro12-v7.apk
           if-no-files-found: error
           retention-days: 30
