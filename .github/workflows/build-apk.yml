@@ -95,7 +95,7 @@ jobs:
       - name: Conservar la firma Android entre compilaciones v7+
         uses: actions/cache@v4
         with:
-          path: /home/runner/.android/debug.keystore
+          path: /home/runner/.config/.android/debug.keystore
           key: 365-agenda-debug-signing-v7-stable
 
       - name: Preparar Android SDK preinstalado
