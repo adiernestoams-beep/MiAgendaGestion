@@ -95,7 +95,7 @@ jobs:
       - name: Conservar la firma Android entre compilaciones v7+
         uses: actions/cache@v4
         with:
-          path: ~/.android/debug.keystore
+          path: /home/runner/.android/debug.keystore
           key: 365-agenda-debug-signing-v7-stable
 
       - name: Preparar Android SDK preinstalado
@@ -118,6 +118,13 @@ jobs:
 
       - name: Compilar APK 365 Agenda
         run: gradle --no-daemon :app:assembleDebug --stacktrace
+
+      - name: Verificar la firma Android y ruta del keystore
+        shell: bash
+        run: |
+          echo "HOME=$HOME"
+          ls -lah "$HOME/.android" || true
+          find /home/runner -maxdepth 6 -type f -name 'debug.keystore' -print || true
 
       - name: Preparar APK final
         shell: bash
