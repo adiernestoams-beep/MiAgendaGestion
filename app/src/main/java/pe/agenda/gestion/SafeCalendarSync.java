@@ -214,13 +214,26 @@ public final class SafeCalendarSync {
         boolean robo=robotLevel(e.title).equals(robotLevel(r.title))&&!robotLevel(r.title).isEmpty();
         if(uni)return 95;
         if(equal)return e.startDate.equals(r.date)?100:90;
-        if(robo && norm(e.title).contains("robot") && norm(r.title).contains("robot"))return 88;
+        String oldName=norm(e.title),newName=norm(r.title);
+        if(oldName.contains("convencion de estudiantes") && newName.contains("convencion de estudiantes"))return 92;
+        if(oldName.startsWith("mural letrado") && newName.startsWith("mural letrado"))return 92;
+        if(oldName.contains("eleccion") && oldName.contains("municip") && newName.contains("eleccion") && newName.contains("municip"))return 92;
+        if(oldName.contains("informe de avance de logro a padres")
+                && newName.contains("informe de logros de aprendizaje")
+                && newName.contains("3") && newName.contains("4") && newName.contains("5"))return 88;
+        if(oldName.contains("robot") && oldName.contains("secundaria") && oldName.contains("primaria")
+                && newName.contains("robot") && newName.contains("secundaria")
+                && !newName.contains("primaria"))return 86;
+        if(robo && oldName.contains("robot") && newName.contains("robot"))return 88;
         return -1;
     }
     private static boolean isUniversity(String t){
         String n=norm(t);
+        // Preparation tasks are separate calendar entries: never merge them
+        // into the parent event, even if their titles mention the university.
+        if(n.matches(".*(flyer|video publicitario|decoracion|afiche|visita al local|promocion|publicidad).*"))return false;
         return n.contains("padres")&&(n.contains("universidad")||n.contains("escuela"))
-            &&(n.contains("ii")||n.contains("segunda")||n.contains("2 "));
+            &&(n.matches(".*\\b(ii|segunda|2)\\b.*"));
     }
     private static String robotLevel(String t){
         String n=norm(t);if(!n.contains("robot"))return "";
