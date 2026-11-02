@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   build:
@@ -17,6 +18,11 @@ jobs:
     steps:
       - name: Descargar proyecto
         uses: actions/checkout@v4
+
+      - name: Registrar ejecución para verificar el APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh issue comment 1 --body "365Agenda-v7 RUN_ID=$GITHUB_RUN_ID SHA=$GITHUB_SHA"
 
       - name: Reconstruir código, datos y logo oficial
         shell: bash
